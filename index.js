@@ -29,7 +29,12 @@ async function run() {
   const foodCollection = client.db('AssignmentElevenDb').collection('food')
 
 
-
+// Add a food to food collection
+app.post('/food', async(req,res)=>{
+    const foodItem = req.body;
+    const result = await foodCollection.insertOne(foodItem);
+    res.send(result);
+})
 
 // get all food item
 app.get('/food', async (req, res)=>{
