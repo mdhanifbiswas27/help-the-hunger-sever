@@ -50,7 +50,32 @@ app.get('/food/:id', async(req, res)=>{
     const result = await foodCollection.findOne(query);
     res.send(result);
 })
-
+// delete a  food
+app.delete('/food/:id' , async(req, res)=>{
+    const id = req.params.id;
+   const query = {_id: new ObjectId(id)}
+   const result = await foodCollection.deleteOne(query);
+   res.send(result);
+ })
+// update a food
+ app.put('/food/:id', async(req, res)=>{
+    const id = req.params.id;
+    const filter ={_id: new ObjectId(id) };
+    const options ={ upsert: true};
+    const updateFood = req.body;
+    const product ={
+      $set:{
+        FoodName :updateFood.FoodName ,
+        quantity:updateFood.quantity,
+          photo:updateFood.photo,
+          location: updateFood.location,
+          time:updateFood.time, 
+          comment:updateFood.comment
+      }
+    }
+    const result = await foodCollection.updateOne(filter,product,options);
+    res.send(result);
+  })
 
 
     // Send a ping to confirm a successful connection
