@@ -36,6 +36,13 @@ app.post('/requestedFood', async(req, res)=>{
     res.send(result);
 })
 
+// get requested food
+app.get('/requestedFood', async(req,res)=>{
+  const cursor = requestedFoodCollection.find();
+  const result = await cursor.toArray();
+  res.send(result);
+})
+
 // Add a food to food collection
 app.post('/food', async(req,res)=>{
     const foodItem = req.body;
