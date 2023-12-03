@@ -50,13 +50,8 @@ app.get('/food/:id', async(req, res)=>{
     const result = await foodCollection.findOne(query);
     res.send(result);
 })
-// delete a  food
-app.delete('/food/:id' , async(req, res)=>{
-    const id = req.params.id;
-   const query = {_id: new ObjectId(id)}
-   const result = await foodCollection.deleteOne(query);
-   res.send(result);
- })
+
+
 // update a food
  app.put('/food/:id', async(req, res)=>{
     const id = req.params.id;
