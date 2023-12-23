@@ -28,6 +28,7 @@ async function run() {
     
   const foodCollection = client.db('AssignmentElevenDb').collection('food')
   const requestedFoodCollection = client.db('AssignmentElevenDb').collection('requestedFood')
+  const userCollection = client.db('AssignmentElevenDb').collection('users')
 
 // add a request food to requested food 
 app.post('/requestedFood', async(req, res)=>{
@@ -35,6 +36,45 @@ app.post('/requestedFood', async(req, res)=>{
     const result = await requestedFoodCollection.insertOne(requestFood)
     res.send(result);
 })
+
+// add user
+app.post('/users', async (req, res)=>{
+   const newUser = req.body;
+   const result = await userCollection.insertOne(newUser);
+   res.send(result);
+})
+// get user
+app.get('/users', async(req, res)=>{
+  const cursor = userCollection.find();
+  const result = await cursor.toArray();
+  res.send(result);
+})
+
+// add a food to food collection
+app.post('/food', async (req, res) => {
+  try {
+    const foodItem = req.body;
+    const result = await foodCollection.insertOne(foodItem);
+    if (result.insertedId) {
+      const userId = foodItem.donatorEmail; 
+      const user = await userCollection.findOne({ email: userId });
+      if (user) {
+        const updatedDonatePoint = user.donatePoint + 1;
+        await userCollection.updateOne({ email: userId }, { $set: { donatePoint: updatedDonatePoint } });
+
+        res.status(201).json({ success: true, message: 'Food added successfully' });
+      } else {
+        res.status(404).json({ success: false, message: 'User not found' });
+      }
+    } else {
+      res.status(400).json({ success: false, message: 'Failed to add food' });
+    }
+  } catch (error) {
+    console.error('Error adding food:', error);
+    res.status(500).json({ success: false, message: 'Internal server error' });
+  }
+});
+
 
 // get requested food
 app.get('/requestedFood', async(req,res)=>{
